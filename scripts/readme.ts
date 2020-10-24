@@ -54,20 +54,20 @@ function toDifficultyBadgeInverted(difficulty: string, locale: SupportedLocale, 
   return toBadge(t(locale, `difficulty.${difficulty}`), count.toString(), DifficultyColors[difficulty])
 }
 
-function quizToBadge(quiz: Quiz, locale: string) {
+function quizToBadge(quiz: Quiz, locale: string, absolute = false) {
   return toBadgeLink(
-    toQuizREADME(quiz, locale),
+    toQuizREADME(quiz, locale, absolute),
     '',
     `${quiz.no}・${quiz.info[locale]?.title || quiz.info[defaultLocale]?.title}`,
     DifficultyColors[quiz.difficulty],
   )
 }
 
-function quizNoToBadges(ids: (string|number)[], quizes: Quiz[], locale: string) {
+function quizNoToBadges(ids: (string|number)[], quizes: Quiz[], locale: string, absolute = false) {
   return ids
     .map(i => quizes.find(q => q.no === Number(i)))
     .filter(Boolean)
-    .map(i => quizToBadge(i!, locale))
+    .map(i => quizToBadge(i!, locale, absolute))
     .join(' ')
 }
 
@@ -121,7 +121,7 @@ async function insertInfoReadme(filepath: string, quiz: Quiz, locale: SupportedL
       + toBadgeLink(`../../${f('README', locale, 'md')}`, '', t(locale, 'badge.back'), 'grey')
       + toBadgeLink(toAnswerShort(quiz.no, locale), '', t(locale, 'badge.share-your-solutions'), 'teal')
       + toBadgeLink(toSolutionsShort(quiz.no), '', t(locale, 'badge.checkout-solutions'), 'de5a77', '?logo=awesome-lists&logoColor=white')
-      + (Array.isArray(info.related) && info.related.length ? `<hr><h3>${t(locale, 'readme.related-challenges')}</h3>${quizNoToBadges(info.related, quizes, locale)}` : '')
+      + (Array.isArray(info.related) && info.related.length ? `<hr><h3>${t(locale, 'readme.related-challenges')}</h3>${quizNoToBadges(info.related, quizes, locale, true)}` : '')
       + '<!--info-footer-end-->',
     )
 
@@ -191,14 +191,14 @@ async function updateQuestionsREADME(quizes: Quiz[]) {
   }
 }
 
-export async function updateREADMEs(argv: string[]) {
+export async function updateREADMEs(type?: 'quiz' | 'index') {
   const quizes = await loadQuizes()
   quizes.sort((a, b) => a.no - b.no)
 
-  if (argv[0] === 'quiz') {
+  if (type === 'quiz') {
     await updateQuestionsREADME(quizes)
   }
-  else if (argv[0] === 'index') {
+  else if (type === 'index') {
     await updateIndexREADME(quizes)
   }
   else {
@@ -209,4 +209,4 @@ export async function updateREADMEs(argv: string[]) {
   }
 }
 
-updateREADMEs(process.argv.slice(2))
+updateREADMEs(process.argv.slice(2)[0] as any)

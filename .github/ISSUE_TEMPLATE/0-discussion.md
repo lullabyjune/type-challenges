@@ -5,9 +5,10 @@ title: ""
 labels: discussion
 ---
 
-<details>
-<summary>💭 Discussion</summary>
+<!--
 
-Talk anything about Typescript or its Type System.
+💭 Discussion
 
-</details>
+Talk anything about TypeScript or its Type System.
+
+-->
