@@ -1,5 +1,7 @@
 import { Equal, Expect } from '@type-challenges/utils'
 
+const fn = (v: boolean) => v ? 1 : 2
+
 type cases = [
   Expect<Equal<string, MyReturnType<() => string>>>,
   Expect<Equal<123, MyReturnType<() => 123>>>,
@@ -14,5 +16,3 @@ type ComplexObject = {
   bar: 'hello'
   prev(): number
 }
-
-const fn = (v: boolean) => v ? 1 : 2
